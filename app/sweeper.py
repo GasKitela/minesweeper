@@ -1,4 +1,5 @@
 import random, time, copy
+import json
 
 def mine_sweeper(bombs, num_rows, num_cols):
     field = [[0 for i in range(num_cols)] for j in range(num_rows)]
@@ -33,6 +34,23 @@ class Game:
 
         self._field = None
         self.is_over = False
+
+    def as_dict(self):
+        field = []
+        for row in self._field:
+            cols = []
+            for square in row:
+                cols.append(square.as_dict())
+            field.append(cols)
+        
+        return {
+            "id": self.id,
+            "num_rows": self.num_rows,
+            "num_cols": self.num_cols,
+            "num_mines": self.num_mines,
+            "field": field,
+            "is_over": self.is_over
+        }
 
     def init_board(self):
         self._field = [[Square(j, i) for i in range(self.num_cols)] for j in range(self.num_rows)]
@@ -144,6 +162,17 @@ class Square:
         self.question = False
         self.open = False
 
+    def as_dict(self):
+        return {
+            "row": self.row,
+            "col": self.col,
+            "value": self._value,
+            "flagged": self.flagged,
+            "question": self.question,
+            "is_mine": self.is_mine,
+            "open": self.open
+        }
+
     @property
     def is_mine(self):
         return self._value == -1
@@ -154,7 +183,9 @@ class Square:
 
 
 
-gg = Game("sarasa", 5, 6, 10)
+ss = Square(3,4)
+
+gg = Game("sarasa", 3, 7, 5)
 
 gg.init_board()
 
@@ -169,6 +200,10 @@ a = list(map(map_listas, gg._field))
 
 print(a)
 
+print(json.dumps(gg.as_dict()))
+#print(ss)
+#print(ss.as_dict())
+#print(json.dumps(ss.as_dict()))
 """
 sa = [Square(1,2), Square(2,3), Square(3,4)] 
 

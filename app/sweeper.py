@@ -34,6 +34,12 @@ class Game:
 
         self._field = None
         self.is_over = False
+        self.time = 0
+
+        #Board setup
+        self.init_board()
+        self.place_mines()
+        self.place_proximities()
 
     def as_dict(self):
         field = []
@@ -49,7 +55,8 @@ class Game:
             "num_cols": self.num_cols,
             "num_mines": self.num_mines,
             "field": field,
-            "is_over": self.is_over
+            "is_over": self.is_over,
+            "time": self.time
         }
 
     def init_board(self):
@@ -183,6 +190,7 @@ class Square:
 
 
 
+"""
 ss = Square(3,4)
 
 gg = Game("sarasa", 3, 7, 5)
@@ -204,7 +212,7 @@ print(json.dumps(gg.as_dict()))
 #print(ss)
 #print(ss.as_dict())
 #print(json.dumps(ss.as_dict()))
-"""
+
 sa = [Square(1,2), Square(2,3), Square(3,4)] 
 
 def map_listas(sqr_list):

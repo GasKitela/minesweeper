@@ -2,7 +2,8 @@ from flask import Flask, render_template, request
 from sweeper import Game
 import json
 
-app = Flask(__name__, static_folder="/client")
+app = Flask(__name__)
+
 _games = {}
 
 @app.route("/")

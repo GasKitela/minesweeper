@@ -31,7 +31,7 @@ def click_square(game_id):
     body = request.get_json()
 
     game = _games[game_id]
-    game.click_square(body.get("rows"), body.get("cols"), body.get("action"))
+    game.click_square(body.get("row"), body.get("col"), body.get("action"))
 
     return json.dumps(game.as_dict())
 

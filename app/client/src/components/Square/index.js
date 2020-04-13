@@ -29,7 +29,7 @@ class Square extends Component {
                         }}
                         onClick={() => this.props.open(this.props.data)}
                     >
-                        {this.props.data.value}
+                        {this.props.data.value > 0 ? this.props.data.value : ""}
                     </div>
                 );
             }

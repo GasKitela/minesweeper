@@ -24,7 +24,7 @@ class App extends Component {
         this.baseState = this.state;
     }
 
-    createNewGame() { api.createGame("sarasa", 5, 5, 2).then(({ data }) => this.setStartGameState(data)) }
+    createNewGame() { api.createGame("sarasa", 10, 10, 10).then(({ data }) => this.setStartGameState(data)) }
 
     componentDidMount() {
         this.createNewGame()

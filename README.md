@@ -9,7 +9,7 @@
 * Ability to select the game parameters: number of rows, columns, and mines
 
 ## What's in progress
-* Implement an API client library for the API designed above. Ideally, in a different language, of your preference, to the one used for the API
+* Implement an API client library for the API designed above. Ideally, in a different language, of your preference, to the one used for the API (https://github.com/GasKitela/minesweeper-client-gk)
 * Persistence
 * Time tracking
 * Ability to support multiple users/accounts

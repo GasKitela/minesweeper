@@ -1,5 +1,4 @@
 import random, time
-import json
 
 class Game:
 
@@ -50,7 +49,7 @@ class Game:
         for _ in range(self.num_mines):
             self.place_mine()
 
-    #Modifico el valor de un cuadrado elegido al azar
+    #Random mine placing
     def place_mine(self):
         row = random.randint(0, self.num_rows - 1)
         col = random.randint(0, self.num_cols - 1)
@@ -60,12 +59,10 @@ class Game:
             self._field[row][col]._value = -1
         else:
             self.place_mine()
-        
-        print("random row and col %d x %d" % (row, col))
+
         return (row, col)
 
     def place_proximities(self):
-        print(list(map(self.from_squares_to_values, self._field)))
         for i in range(self.num_rows):
             for j in range(self.num_cols):
                 if (i < self.num_rows and j < self.num_cols and self._field[i][j]._value == -1):

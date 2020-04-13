@@ -19,6 +19,8 @@ def gamestart():
     new_game = Game(game_id, body.get("rows"), body.get("cols"), body.get("mines"))
     _games[game_id] = new_game
 
+    print("game created with id %s", game_id)
+
     return json.dumps(new_game.as_dict())
 
 @app.route("/ms/<game_id>", methods=['GET'])

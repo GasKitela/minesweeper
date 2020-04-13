@@ -14,7 +14,6 @@ const BoardHeader = props => {
         ) : (
             <i className="icon ion-sad-outline" />
         );
-    if (!props.show) return null
 
     return (
         <div className="board-head">

@@ -11,7 +11,7 @@ class Board extends Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(nextProps) {
         if (
             this.props.openSquares > nextProps.openSquares ||
             this.props.columns !== nextProps.columns
@@ -102,7 +102,6 @@ class Board extends Component {
             />
         ));
 
-        if (!this.props.show) return null
 
         return <div className="board">{rows}</div>;
     }

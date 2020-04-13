@@ -18,16 +18,24 @@ class App extends Component {
             rows: 0,
             columns: 0,
             field: [],
-            showBoard: false
+            shownComponent: 'gameconf'
         };
 
         this.baseState = this.state;
     }
 
-    createNewGame() { api.createGame("sarasa", 10, 10, 10).then(({ data }) => this.setStartGameState(data)) }
+    createNewGame = (rows, cols, mines) => {
+        api.createGame("sarasa", rows, cols, mines).then(({ data }) => this.setStartGameState(data))
+    }
 
     componentDidMount() {
-        this.createNewGame()
+        //this.createNewGame()
+    }
+
+    componentToShow = comp => {
+        this.setState({
+            shownComponent: comp
+        })
     }
 
     componentDidUpdate(nextProps, nextState) {
@@ -39,13 +47,13 @@ class App extends Component {
 
     setStartGameState = (data) => {
         console.log(data.field)
-            this.setState( {
+        this.setState( {
             mines: data.numMines,
             rows: data.numRows,
             columns: data.numCols,
             flagCount: data.numMines,
             field: data.field,
-            showBoard: true
+            shownComponent: 'board'
         })
     }
 
@@ -74,6 +82,7 @@ class App extends Component {
     reset = () => {
         this.intervals.map(clearInterval);
         this.setState(Object.assign({}, this.baseState), () => {
+            debugger;
             this.createNewGame();
             this.intervals = [];
         });
@@ -124,31 +133,38 @@ class App extends Component {
     render() {
         return (
             <div className="minesweeper">
-                <Gameconf>
-                </Gameconf>
-                <Router>
-                    <h1>Welcome to minesweeper.</h1>
-                    <BoardHeader
-                        time={this.state.time}
-                        flagsUsed={this.state.flagCount}
-                        reset={this.reset}
-                        status={this.state.gameStatus}
-                        show={this.state.showBoard}
-                    />
-                    <Board
-                        show={this.state.showBoard}
-                        openSquares={this.state.openSquares}
-                        mines={this.state.mines}
-                        rows={this.state.rows}
-                        columns={this.state.columns}
-                        field={this.state.field}
-                        endGame={this.endGame}
-                        status={this.state.gameStatus}
-                        onSquareClick={this.handleSquareClick}
-                        changeFlagAmount={this.changeFlagAmount}
-                        updateAfterClick={this.updateAfterClick}
-                    />
-                </Router>
+                {(() => {
+                    switch (this.state.shownComponent) {
+                        case 'gameconf':
+                            return <Gameconf
+                                    onClickCreateNewGame={this.createNewGame}
+                                />
+                        case 'board':
+                            return <div>
+                                    <h1>Welcome to minesweeper.</h1>
+                                    <BoardHeader
+                                        time={this.state.time}
+                                        flagsUsed={this.state.flagCount}
+                                        reset={this.reset}
+                                        status={this.state.gameStatus}
+                                        show={this.state.shownComponent}
+                                    />
+                                    <Board
+                                        show={this.state.shownComponent}
+                                        openSquares={this.state.openSquares}
+                                        mines={this.state.mines}
+                                        rows={this.state.rows}
+                                        columns={this.state.columns}
+                                        field={this.state.field}
+                                        endGame={this.endGame}
+                                        status={this.state.gameStatus}
+                                        onSquareClick={this.handleSquareClick}
+                                        changeFlagAmount={this.changeFlagAmount}
+                                        updateAfterClick={this.updateAfterClick}
+                                    />
+                            </div>
+                    }
+                })()}
             </div>
         );
     }

@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, request
 from sweeper import Game
 import json
+import uuid
 
 app = Flask(__name__)
 
@@ -8,32 +9,31 @@ _games = {}
 
 @app.route("/")
 def hello():
-    return 'Hello World!'
+    return 'Welcome to Minesweeper API by Gaston Kitela'
 
-#CAMBIAR A POST CON FORM
-#CAMBIAR A: O GENERAR UN UUID, O DEJAR ELEGIR, PERO CHEQUEAR QUE NO SE REPITA
-@app.route("/games/<game_id>/<rows>/<cols>/<mines>", methods=['POST'])
-def gamestart(game_id, rows, cols, mines):
-    print()
-    gg = Game(game_id, int(rows), int(cols), int(mines))
-    _games[game_id] = gg
-    return json.dumps(gg.as_dict())
+@app.route("/ms/new-game", methods=['POST'])
+def gamestart():
+    body = request.get_json()
 
-@app.route("/games/<game_id>", methods=['GET'])
+    game_id = str(uuid.uuid1())
+    new_game = Game(game_id, body.get("rows"), body.get("cols"), body.get("mines"))
+    _games[game_id] = new_game
+
+    return json.dumps(new_game.as_dict())
+
+@app.route("/ms/<game_id>", methods=['GET'])
 def get_game_in_progress(game_id):
     game = _games[game_id]
     return json.dumps(game.as_dict())
 
-@app.route("/games/<game_id>/click/<row>/<col>/<action>", methods=['PUT'])
-def click_square(game_id, row, col, action):
+@app.route("/ms/<game_id>/click", methods=['PUT'])
+def click_square(game_id):
+    body = request.get_json()
+
     game = _games[game_id]
-    game.click_square(int(row), int(col), action)
+    game.click_square(body.get("rows"), body.get("cols"), body.get("action"))
+
     return json.dumps(game.as_dict())
-
-@app.route("/hola-mundo", methods=['GET'])
-def hola_mundo():
-    return 'hola mundo'
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, port=4433)

@@ -1,4 +1,4 @@
-import random, time, copy
+import random, time
 import json
 
 class Game:
@@ -43,8 +43,7 @@ class Game:
     def init_board(self):
         self._field = [[Square(j, i) for i in range(self.num_cols)] for j in range(self.num_rows)]
         
-    #Cambiar nombre, esto convierte una fila de squares a una fila de valores
-    def map_listas(self, sqr_list):
+    def from_squares_to_values(self, sqr_list):
         return list(map(lambda x: x._value, sqr_list))
 
     def place_mines(self):
@@ -66,11 +65,11 @@ class Game:
         return (row, col)
 
     def place_proximities(self):
-        print(list(map(self.map_listas, self._field)))
+        print(list(map(self.from_squares_to_values, self._field)))
         for i in range(self.num_rows):
             for j in range(self.num_cols):
                 if (i < self.num_rows and j < self.num_cols and self._field[i][j]._value == -1):
-                    row_range = range(i - 1, i + 2) #El +2 es xque range, x ej, en (0,0), va a ir de (-1,2), pero la 2 no cuenta, osea que agarra -1,0,1 
+                    row_range = range(i - 1, i + 2)
                     col_range = range(j - 1, j + 2)
                 
                     for i2 in row_range:
@@ -88,15 +87,12 @@ class Game:
 
         if not square.open:
             if action == 'FLAG':
-                if square.flagged: #Si ya estaba flaggeado, le cambio flag a question
-                    print('questioning')
+                if square.flagged: #Turn flag to question mark
                     square.flagged = False
                     square.question = True
-                elif square.question: #Si estaba como question, le pongo question en false (ahora ambas cosas tarian en false)
-                    print('unquestioning and unflagging')
+                elif square.question: #Remove question mark (already unflagged)
                     square.question = False
-                else: #Quiere decir que no estaba ni flaggeado ni questionado, tonces lo flaggeo
-                    print('flagging')
+                else: #Placing flag
                     square.flagged = True
             elif action == 'CLICK' and not square.flagged and not square.question:
                 square.open = True
@@ -106,8 +102,6 @@ class Game:
                     self.click_empty_square(square)
 
             self.check_end_game()
-
-        #return self.click_result()
 
     def end_game(self):
         self.is_over = True
@@ -137,7 +131,6 @@ class Game:
             "is_over": self.is_over
         }
 
-    #Chequear
     def check_end_game(self):
         num_flags = 0
         for row in self._field:
@@ -155,9 +148,7 @@ class Square:
 
         self.row = row
         self.col = col
-        # value -1 to 8. the number of sorrounding mines. -1 is the mine. 0 means
-        # "empty cell"
-        self._value = 0
+        self._value = 0 # value -1 to 8. the number of sorrounding mines. -1 is the mine. 0 means
         self.flagged = False
         self.question = False
         self.open = False
@@ -180,36 +171,3 @@ class Square:
     @property
     def is_empty(self):
         return self._value == 0
-
-
-
-"""
-ss = Square(3,4)
-
-gg = Game("sarasa", 3, 7, 5)
-
-gg.init_board()
-
-gg.place_mines()
-
-gg.place_proximities()
-
-def map_listas(sqr_list):
-    return list(map(lambda x: x._value, sqr_list))
-
-a = list(map(map_listas, gg._field))
-
-print(a)
-
-print(json.dumps(gg.as_dict()))
-#print(ss)
-#print(ss.as_dict())
-#print(json.dumps(ss.as_dict()))
-
-sa = [Square(1,2), Square(2,3), Square(3,4)] 
-
-def map_listas(sqr_list):
-    return map(lambda x: x._value, sqr_list)
-
-print(map_listas(sa))
-"""

@@ -1,27 +1,6 @@
 import random, time, copy
 import json
 
-def mine_sweeper(bombs, num_rows, num_cols):
-    field = [[0 for i in range(num_cols)] for j in range(num_rows)]
-    
-    for bomb_location in bombs:
-        (bomb_row, bomb_col) = bomb_location
-        field[bomb_row][bomb_col] = -1
-
-        row_range = range(bomb_row - 1, bomb_row + 2) #El +2 es xque range, x ej, en (0,0), va a ir de (-1,2), pero la 2 no cuenta, osea que agarra -1,0,1 
-        col_range = range(bomb_col - 1, bomb_col + 2)
-
-        for i in row_range:
-            for j in col_range:
-                if (0 <= i < num_rows and 0 <= j < num_cols and field[i][j] != -1):
-                    field[i][j] += 1
-    return field
-    
-
-print(mine_sweeper([[0,0], [1,2]], 3, 4))
-
-print(range(3,3))
-
 class Game:
 
     def __init__(self, uid, rows, cols, mines):
@@ -41,20 +20,22 @@ class Game:
         self.place_mines()
         self.place_proximities()
 
-    def as_dict(self):
+    def field_as_dict(self):
         field = []
         for row in self._field:
             cols = []
             for square in row:
                 cols.append(square.as_dict())
             field.append(cols)
-        
+        return field
+
+    def as_dict(self):
         return {
             "id": self.id,
             "num_rows": self.num_rows,
             "num_cols": self.num_cols,
             "num_mines": self.num_mines,
-            "field": field,
+            "field": self.field_as_dict(),
             "is_over": self.is_over,
             "time": self.time
         }
@@ -107,21 +88,26 @@ class Game:
 
         if not square.open:
             if action == 'FLAG':
-                square.flagged = True
-            elif action == 'QUESTION':
-                square.question = True
-            elif action == 'CLICK':
-                square.flagged = False
+                if square.flagged: #Si ya estaba flaggeado, le cambio flag a question
+                    print('questioning')
+                    square.flagged = False
+                    square.question = True
+                elif square.question: #Si estaba como question, le pongo question en false (ahora ambas cosas tarian en false)
+                    print('unquestioning and unflagging')
+                    square.question = False
+                else: #Quiere decir que no estaba ni flaggeado ni questionado, tonces lo flaggeo
+                    print('flagging')
+                    square.flagged = True
+            elif action == 'CLICK' and not square.flagged and not square.question:
                 square.open = True
                 if square.is_mine:
                     self.end_game()
                 elif square.is_empty:
                     self.click_empty_square(square)
-            else:
-                square.flagged = False
-                square.question = False
 
             self.check_end_game()
+
+        #return self.click_result()
 
     def end_game(self):
         self.is_over = True
@@ -143,7 +129,14 @@ class Game:
                     adjacent_squares.append(self._field[i][j])
         
         return adjacent_squares
-    
+
+    def click_result(self):
+        return {
+            "id": self.id,
+            "field": self.field_as_dict(),
+            "is_over": self.is_over
+        }
+
     #Chequear
     def check_end_game(self):
         num_flags = 0

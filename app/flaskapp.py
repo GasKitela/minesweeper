@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from sweeper import Game
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="/client")
 _games = {}
 
 @app.route("/")
@@ -29,5 +29,10 @@ def click_square(game_id, row, col, action):
     game.click_square(int(row), int(col), action)
     return json.dumps(game.as_dict())
 
+@app.route("/hola-mundo", methods=['GET'])
+def hola_mundo():
+    return 'hola mundo'
+
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=True, port=4433)
